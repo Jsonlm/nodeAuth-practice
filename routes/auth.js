@@ -5,13 +5,11 @@ const validation = require('../validations/auth-validations');
 //Api de registro
 router.post('/register', async (req, res) => {
 
-    const register = async () => {
-        let user = service.getReqBody(req);
-
-        service.saveUser(user, res);     
+    const register = async() => {
+        service.hashPassword(req, res);
     };
 
-    const { error } = validation.schemaRegister.validate(req.body) ?? validation.schemaRegister.validate(req.body) ;
+    const { error } = validation.schemaRegister.validate(req.body) ?? validation.schemaRegister.validate(req.body);
 
     const finalFilter = () => { error ? res.status(400).json({ error: error.details[0].message }) : register(); };
 

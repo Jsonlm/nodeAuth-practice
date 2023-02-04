@@ -3,26 +3,23 @@ const bcrypt = require('bcrypt');
 const User = require('../models/users');
 
 const getReqBody = async (name, email, password, res) => {
-    switch (name) {
-        case !name:
-            console.log("case1");
-            //login case
-            user = new User({
-                email: email,
-                password: password
-            });
-            //loginUser(user, res);
-            break;
-        default:
-            console.log("case2");
-            //register case
-            user = new User({
-                name: name,
-                email: email,
-                password: password
-            });
-            saveUser(user, res);
-            break;
+    if (!name) {
+        console.log("case1");
+        //login case
+        user = new User({
+            email: email,
+            password: password
+        });
+        loginUser(user, res);
+    } else if (name) {
+        console.log("case2");
+        //register case
+        user = new User({
+            name: name,
+            email: email,
+            password: password
+        });
+        saveUser(user, res);
     }
 }
 
@@ -48,20 +45,27 @@ const saveUser = async (user, res) => {
     }
 }
 
-/* const loginUser = async (user, res) => {
+const loginUser = async (user, res, status) => {
     try {
+        if (status) {
+            res.json({ user: user, data: 'exito bienvenido' })
+            console.log("logged");
+        } else {
+            res.status(400).json({ error: "Usuario o contraseña incorrecta" })
+        }
     } catch (error) {
         res.status(400).json({ error })
     }
-} */
+}
 
 const verifyCurrentRegistry = async (email) => {
     return await User.findOne({ email: email });
 }
 
 module.exports = {
-    saveUser,
     getReqBody,
     hashPassword,
+    loginUser,
+    saveUser,
     verifyCurrentRegistry
 };
